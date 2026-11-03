@@ -1,0 +1,11 @@
+node_modules/
+.env*
+!.env.example
+npm-debug.log*
+.next/
+.next-dev/
+.next-stale/
+scroll-diagnostic.jsonl
+scroll-live.png
+out/
+*.tsbuildinfo
