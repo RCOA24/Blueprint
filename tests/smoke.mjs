@@ -91,17 +91,18 @@ try {
   await page.locator('.appointment-section select[name="service"]').selectOption({ label: 'Architectural services' });
   const requestedDate = new Date(Date.now() + 30 * 86400000).toISOString().slice(0, 10);
   await page.locator('.appointment-section input[name="date"]').fill(requestedDate);
-  await page.context().route('https://mail.google.com/**', route => route.fulfill({ status: 200, contentType: 'text/html', body: '<!doctype html><title>Gmail compose URL check</title>' }));
-  assert.equal(await page.getByText('Compose in Gmail Web').count(), 0);
-  assert.equal(await page.getByText('Compose in Outlook Web').count(), 0);
-  assert.equal(await page.getByText('Copy appointment details').count(), 0);
-  const [popup] = await Promise.all([page.waitForEvent('popup'), page.locator('.appointment-section button[type="submit"]').click()]);
-  assert.match(popup.url(), /mail\.google\.com\/mail/);
-  assert.match(popup.url(), /Architectural\+services/);
-  assert.ok(popup.url().includes(requestedDate));
-  assert.match(popup.url(), /visitor%40example.com/);
-  await popup.close();
-  assert.match(await page.locator('.appointment-section [role="status"]').textContent(), /not sent until you click Send/);
+  let submitted;
+  await page.route('**/api/appointment.php', async route => {
+    submitted = route.request().postData();
+    await route.fulfill({ status: 200, contentType: 'application/json', body: '{"message":"Request sent."}' });
+  });
+  await page.locator('.appointment-section button[type="submit"]').click();
+  await page.getByText('Your request was sent. A copy was emailed to you.').waitFor();
+  assert.match(submitted, /visitor@example.com/);
+  assert.match(submitted, /Architectural services/);
+  assert.ok(submitted.includes(requestedDate));
+  assert.equal(await page.locator('.appointment-section input[name="name"]').inputValue(), '');
+  assert.equal(await page.locator('text=Gmail draft').count(), 0);
   await page.goto(`${base}/contact/?service=General%20construction`);
   assert.equal(await page.locator('#appointment-form select[name="service"]').inputValue(), 'General construction');
   await page.goto(`${base}/contact/?product=Wood%20fence%20systems`);
@@ -109,7 +110,7 @@ try {
   await page.goto(`${base}/careers/`);
   await page.locator('.job summary').first().click();
   assert.equal(await page.locator('.job').first().getAttribute('open'), '');
-  console.log('Browser smoke tests passed: 14 routes, 6 widths each, reference content, navigation, filters, gallery, careers, prefill, address, and Gmail appointment draft.');
+  console.log('Browser smoke tests passed: 14 routes, 6 widths each, reference content, navigation, filters, gallery, careers, prefill, address, and appointment form submission.');
 } finally {
   await browser.close();
   await new Promise(resolve => server.close(resolve));

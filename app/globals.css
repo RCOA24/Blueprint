@@ -30,6 +30,7 @@
 .appointment-form .optional{font-weight:400;color:var(--muted)}
 .appointment-form .form-note{margin:0 0 22px}
 .appointment-form [role=status]{font-size:13px;color:var(--blue);margin:18px 0 0}
+.appointment-form .form-honeypot{position:absolute;left:-10000px;width:1px;height:1px;overflow:hidden}
 .appointment-faq{padding-top:85px;max-width:900px}
 .appointment-faq h2{font-size:clamp(30px,3.5vw,44px)}
 .appointment-faq details{border-top:1px solid var(--line);padding:20px 0}
