@@ -32,7 +32,16 @@ npm.cmd run test:e2e
 
 The browser test requires an installed Google Chrome browser and a completed production build. It mocks the PHP endpoint; it does not send email. To exercise the real PHP endpoint with an isolated fake mailer, install PHP 8.1 or later and run `node tests/appointment-backend.mjs`. The test creates temporary files and uses no SMTP server. PHP can also be checked with `php -l public/api/appointment.php` and the Composer manifest with `composer validate --no-check-publish` from `mail-backend/`.
 
-The Next.js development server serves static files and does not execute PHP. Use PHP-capable hosting for end-to-end appointment submissions.
+For local appointment submissions, install PHP 8.1 or later with OpenSSL and Composer 2. The Next.js development server proxies the appointment endpoint to a separate PHP server. From the project folder, prepare its private directory:
+
+```powershell
+New-Item -ItemType Directory -Force blueprint-mail
+Copy-Item mail-backend/composer.json, mail-backend/composer.lock blueprint-mail/
+composer install --no-dev --working-dir=blueprint-mail
+if (-not (Test-Path blueprint-mail/config.php)) { Copy-Item mail-backend/config.php blueprint-mail/config.php }
+```
+
+Create `mail-backend/config.php` from `config.example.php` and fill in your SMTP settings first if it does not exist. Keep both config files private. In separate terminals, run `npm.cmd run dev:php` and `npm.cmd run dev`, then open `http://localhost:3000/contact/`. Blueprint uses PHP port 8001 so it can run alongside Dembassy. Restart Next.js after changing the proxy configuration. The PHP server needs write access to `blueprint-mail` for rate limiting. The test recipient in the private configuration receives requests; use authorized test addresses and replace test settings with the business's production mailbox before launch. Production still requires PHP-capable hosting and the private directory described below.
 
 ## Deploy to Hostinger
 

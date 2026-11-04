@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "dev:php": "php -S 127.0.0.1:8001 -t public",
     "build": "next build",
     "start": "next start",
     "typecheck": "tsc --noEmit",

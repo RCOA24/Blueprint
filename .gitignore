@@ -12,3 +12,4 @@ out/
 mail-backend/config.php
 mail-backend/vendor/
 mail-backend/rate-limit.json
+blueprint-mail/
