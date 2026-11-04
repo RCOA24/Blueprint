@@ -1,8 +1,10 @@
 <?php
 declare(strict_types=1);
 
+ini_set('display_errors', '0');
 header('Content-Type: application/json; charset=utf-8');
 header('Cache-Control: no-store');
+header('X-Content-Type-Options: nosniff');
 
 function respond(int $status, string $message): void
 {
@@ -11,39 +13,116 @@ function respond(int $status, string $message): void
     exit;
 }
 
-if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+function unavailable(string $reason): void
+{
+    // Log only a fixed diagnostic category; SMTP exceptions can contain sensitive data.
+    error_log('Blueprint appointment: ' . $reason);
+    respond(503, 'Email service is unavailable.');
+}
+
+/** Count every POST, including invalid requests, in one bounded private file. */
+function limitRequests(string $directory): void
+{
+    $ip = $_SERVER['REMOTE_ADDR'] ?? '';
+    if (!is_string($ip) || !filter_var($ip, FILTER_VALIDATE_IP) || !is_dir($directory)) {
+        unavailable('rate limiter unavailable');
+    }
+    $path = $directory . '/rate-limit.json';
+    if (is_link($path)) {
+        unavailable('rate limiter unavailable');
+    }
+    $file = @fopen($path, 'c+b');
+    if ($file === false) {
+        unavailable('rate limiter unavailable');
+    }
+    @chmod($path, 0600);
+    if (!flock($file, LOCK_EX)) {
+        fclose($file);
+        unavailable('rate limiter unavailable');
+    }
+    $content = stream_get_contents($file, 1048577);
+    $state = $content === '' ? [] : json_decode((string) $content, true);
+    if ($content === false || strlen($content) > 1048576 || !is_array($state)) {
+        flock($file, LOCK_UN);
+        fclose($file);
+        unavailable('rate limiter unavailable');
+    }
+    $now = time();
+    $window = 900;
+    foreach ($state as $key => $timestamps) {
+        if (!is_array($timestamps)) {
+            flock($file, LOCK_UN);
+            fclose($file);
+            unavailable('rate limiter unavailable');
+        }
+        $state[$key] = array_values(array_filter($timestamps, static fn ($stamp) => is_int($stamp) && $stamp > $now - $window && $stamp <= $now));
+        if (!$state[$key]) {
+            unset($state[$key]);
+        }
+    }
+    $key = hash('sha256', $ip);
+    if (!isset($state[$key]) && count($state) >= 4096) {
+        flock($file, LOCK_UN);
+        fclose($file);
+        unavailable('rate limiter capacity reached');
+    }
+    $attempts = $state[$key] ?? [];
+    if (count($attempts) >= 8) {
+        $retryAfter = max(1, $attempts[0] + $window - $now);
+        flock($file, LOCK_UN);
+        fclose($file);
+        header('Retry-After: ' . $retryAfter);
+        respond(429, 'Please wait before trying again.');
+    }
+    $attempts[] = $now;
+    $state[$key] = $attempts;
+    $encoded = json_encode($state);
+    rewind($file);
+    $written = is_string($encoded) && ftruncate($file, 0) && fwrite($file, $encoded) === strlen($encoded) && fflush($file);
+    flock($file, LOCK_UN);
+    fclose($file);
+    if (!$written) {
+        unavailable('rate limiter unavailable');
+    }
+}
+
+function field(string $key, int $maximum, bool $multiline = false): string
+{
+    $value = $_POST[$key] ?? '';
+    if (!is_string($value) || strlen($value) > $maximum || preg_match('//u', $value) !== 1 ||
+        preg_match($multiline ? '/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/' : '/[\x00-\x1F\x7F]/', $value)) {
+        respond(422, 'Please check the form fields.');
+    }
+    return trim($value);
+}
+
+if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST') {
     header('Allow: POST');
     respond(405, 'Method not allowed.');
 }
 
-if ((int) ($_SERVER['CONTENT_LENGTH'] ?? 0) > 16384) {
+// public_html/api/appointment.php and blueprint-mail share the document root's parent.
+$privateDirectory = dirname(__DIR__, 2) . '/blueprint-mail';
+limitRequests($privateDirectory);
+
+$length = $_SERVER['CONTENT_LENGTH'] ?? '';
+if (!is_string($length) || ($length !== '' && (!ctype_digit($length) || (float) $length > 16384))) {
     respond(413, 'Request too large.');
 }
 
-if (!empty($_POST['website'])) {
-    respond(200, 'Request received.');
+$website = field('website', 500);
+if ($website !== '') {
+    respond(200, 'Request accepted.');
 }
 
-function field(string $key, int $maximum): string
-{
-    $value = $_POST[$key] ?? '';
-    if (!is_string($value)) {
-        respond(422, 'Invalid form data.');
-    }
-    $value = trim($value);
-    if (strlen($value) > $maximum) {
-        respond(422, 'A field is too long.');
-    }
-    return $value;
-}
-
-$name = field('name', 120);
+// Limits are bytes, leaving room for multibyte characters in names and messages.
+$name = field('name', 480);
 $email = field('email', 254);
-$phone = field('phone', 60);
+$phone = field('phone', 120);
 $service = field('service', 100);
 $date = field('date', 10);
 $time = field('time', 30);
-$message = field('message', 4000);
+$message = field('message', 8000, true);
 
 $services = [
     'General construction', 'Architectural services', 'Remodeling & renovation',
@@ -56,54 +135,65 @@ if ($name === '' || !filter_var($email, FILTER_VALIDATE_EMAIL) || !in_array($ser
 $preferredDate = DateTimeImmutable::createFromFormat('!Y-m-d', $date, new DateTimeZone('America/Cayman'));
 $today = new DateTimeImmutable('today', new DateTimeZone('America/Cayman'));
 if (!$preferredDate || $preferredDate->format('Y-m-d') !== $date || $preferredDate < $today) {
-    respond(422, 'Please choose a valid future date.');
+    respond(422, 'Please choose a valid date.');
 }
 
-// The upload places this endpoint in public_html/api and this private folder beside public_html.
-$privateDirectory = dirname(__DIR__, 2) . '/blueprint-mail';
 $configFile = $privateDirectory . '/config.php';
 $autoloadFile = $privateDirectory . '/vendor/autoload.php';
-if (!is_file($configFile) || !is_file($autoloadFile)) {
-    error_log('Blueprint appointment mail configuration is missing.');
-    respond(503, 'Email service is unavailable.');
+if (!is_file($configFile) || !is_readable($configFile)) {
+    unavailable('mail configuration missing');
 }
-
-$config = require $configFile;
-require $autoloadFile;
-
 try {
+    $config = require $configFile;
+    if (!is_array($config)) {
+        unavailable('mail configuration invalid');
+    }
+    foreach (['host', 'username', 'password', 'from'] as $key) {
+        if (!isset($config[$key]) || !is_string($config[$key]) || trim($config[$key]) === '' || preg_match('/[\r\n\x00]/', $config[$key])) {
+            unavailable('mail configuration invalid');
+        }
+    }
+    $recipient = $config['recipient'] ?? 'info@blueprint.ky';
+    if (!is_string($recipient) || !filter_var($recipient, FILTER_VALIDATE_EMAIL) ||
+        !filter_var($config['from'], FILTER_VALIDATE_EMAIL) ||
+        !filter_var($config['host'], FILTER_VALIDATE_DOMAIN, FILTER_FLAG_HOSTNAME) ||
+        !in_array($config['port'] ?? null, [465, 587], true) ||
+        $config['host'] === 'smtp.example.com' || $config['password'] === 'replace-with-smtp-password') {
+        unavailable('mail configuration invalid');
+    }
+    if (!is_file($autoloadFile) || !is_readable($autoloadFile)) {
+        unavailable('mail dependency missing');
+    }
+    require $autoloadFile;
+    if (!class_exists(PHPMailer\PHPMailer\PHPMailer::class)) {
+        unavailable('mail dependency invalid');
+    }
     $mail = new PHPMailer\PHPMailer\PHPMailer(true);
     $mail->isSMTP();
     $mail->Host = $config['host'];
-    $mail->Port = (int) $config['port'];
+    $mail->Port = $config['port'];
     $mail->SMTPAuth = true;
     $mail->Username = $config['username'];
     $mail->Password = $config['password'];
     $mail->SMTPSecure = $mail->Port === 465
         ? PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_SMTPS
         : PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_STARTTLS;
+    $mail->Timeout = 15;
     $mail->CharSet = 'UTF-8';
     $mail->setFrom($config['from'], 'Blueprint Group');
-    $mail->addAddress($config['recipient'] ?? 'info@blueprint.ky');
+    $mail->addAddress($recipient);
     $mail->addCC($email, $name);
     $mail->addReplyTo($email, $name);
     $mail->Subject = 'Appointment request - ' . $service;
-    $lines = [
-        'New appointment request', '',
-        'Full name: ' . $name,
-        'Email address: ' . $email,
-        'Contact number: ' . ($phone ?: 'Not provided'),
-        'Service: ' . $service,
-        'Preferred date: ' . $date,
-        'Preferred time of day: ' . $time . ' (Cayman Islands time)',
-        '', 'Additional message:', $message ?: 'None', '',
-        'The team will reply to confirm availability.',
-    ];
+    $mail->Body = implode("\n", [
+        'New appointment request', '', 'Full name: ' . $name, 'Email address: ' . $email,
+        'Contact number: ' . ($phone ?: 'Not provided'), 'Service: ' . $service,
+        'Preferred date: ' . $date, 'Preferred time of day: ' . $time . ' (Cayman Islands time)',
+        '', 'Additional message:', $message ?: 'None', '', 'The team will reply to confirm availability.',
+    ]);
     $mail->isHTML(false);
-    $mail->Body = implode("\n", $lines);
     $mail->send();
-    respond(200, 'Request sent.');
+    respond(200, 'Request accepted.');
 } catch (Throwable $exception) {
-    error_log('Blueprint appointment mail failed: ' . $exception->getMessage());
-    respond(503, 'Email service is unavailable.');
+    unavailable('mail submission failed');
 }
