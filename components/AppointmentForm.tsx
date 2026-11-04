@@ -11,6 +11,7 @@ function caymanToday(): string {
 
 export default function AppointmentForm() {
   const formRef = useRef<HTMLFormElement>(null);
+  const sendingRef = useRef(false);
   const [service, setService] = useState('');
   const [message, setMessage] = useState('');
   const [minimumDate, setMinimumDate] = useState('');
@@ -28,22 +29,32 @@ export default function AppointmentForm() {
 
   async function sendRequest() {
     const form = formRef.current;
-    if (!form || !form.reportValidity() || sending) return;
+    if (!form || !form.reportValidity() || sendingRef.current) return;
     const data = new FormData(form);
+    sendingRef.current = true;
     setSending(true);
     setStatus('Sending your request…');
+    const controller = new AbortController();
+    const timeout = window.setTimeout(() => controller.abort(), 30000);
     try {
-      const response = await fetch('/api/appointment.php', { method: 'POST', body: data, headers: { Accept: 'application/json' } });
-      if (!response.ok) throw new Error('Send failed');
+      const response = await fetch('/api/appointment.php', { method: 'POST', body: data, headers: { Accept: 'application/json' }, signal: controller.signal });
+      if (!response.ok) {
+        if (response.status === 422 || response.status === 413) setStatus('Please check your details and try again.');
+        else if (response.status === 429) setStatus('Too many requests. Please wait a few minutes and try again.');
+        else setStatus('We could not confirm whether your request was sent. Please contact info@blueprint.ky before trying again.');
+        return;
+      }
       const result: unknown = await response.json();
-      if (!result || typeof result !== 'object' || !('message' in result) || result.message !== 'Request sent.') throw new Error('Unexpected response');
+      if (!result || typeof result !== 'object' || !('message' in result) || result.message !== 'Request accepted.') throw new Error('Unexpected response');
       form.reset();
       setService('');
       setMessage('');
-      setStatus('Your request was sent. A copy was emailed to you. Our team will reply to confirm availability.');
+      setStatus('Your request and a copy for you were accepted for sending. Our team will reply to confirm availability.');
     } catch {
-      setStatus('We could not send your request. Please try again or email info@blueprint.ky.');
+      setStatus('We could not confirm whether your request was sent. Please contact info@blueprint.ky before trying again.');
     } finally {
+      window.clearTimeout(timeout);
+      sendingRef.current = false;
       setSending(false);
     }
   }
