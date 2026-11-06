@@ -24,28 +24,27 @@ function unavailable(string $reason): void
 function limitRequests(string $directory): void
 {
     $ip = $_SERVER['REMOTE_ADDR'] ?? '';
-    if (!is_string($ip) || !filter_var($ip, FILTER_VALIDATE_IP) || !is_dir($directory)) {
-        unavailable('rate limiter unavailable');
-    }
+    if (!is_string($ip) || !filter_var($ip, FILTER_VALIDATE_IP)) unavailable('rate limiter invalid client address');
+    if (!is_dir($directory)) unavailable('rate limiter private directory missing');
     $path = $directory . '/rate-limit.json';
     if (is_link($path)) {
-        unavailable('rate limiter unavailable');
+        unavailable('rate limiter storage is a symlink');
     }
     $file = @fopen($path, 'c+b');
     if ($file === false) {
-        unavailable('rate limiter unavailable');
+        unavailable('rate limiter storage open failed');
     }
     @chmod($path, 0600);
     if (!flock($file, LOCK_EX)) {
         fclose($file);
-        unavailable('rate limiter unavailable');
+        unavailable('rate limiter storage lock failed');
     }
     $content = stream_get_contents($file, 1048577);
     $state = $content === '' ? [] : json_decode((string) $content, true);
     if ($content === false || strlen($content) > 1048576 || !is_array($state)) {
         flock($file, LOCK_UN);
         fclose($file);
-        unavailable('rate limiter unavailable');
+        unavailable('rate limiter storage invalid');
     }
     $now = time();
     $window = 900;
@@ -53,7 +52,7 @@ function limitRequests(string $directory): void
         if (!is_array($timestamps)) {
             flock($file, LOCK_UN);
             fclose($file);
-            unavailable('rate limiter unavailable');
+            unavailable('rate limiter storage invalid');
         }
         $state[$key] = array_values(array_filter($timestamps, static fn ($stamp) => is_int($stamp) && $stamp > $now - $window && $stamp <= $now));
         if (!$state[$key]) {
@@ -82,7 +81,7 @@ function limitRequests(string $directory): void
     flock($file, LOCK_UN);
     fclose($file);
     if (!$written) {
-        unavailable('rate limiter unavailable');
+        unavailable('rate limiter storage write failed');
     }
 }
 
@@ -101,8 +100,8 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST') {
     respond(405, 'Method not allowed.');
 }
 
-// public_html/api/appointment.php and blueprint-mail share the document root's parent.
-$privateDirectory = dirname(__DIR__, 2) . '/blueprint-mail';
+// GoDaddy: /home/account/public_html/blueprint.ky/api -> /home/account.
+$privateDirectory = dirname(__DIR__, 3) . '/blueprint-mail';
 limitRequests($privateDirectory);
 
 $length = $_SERVER['CONTENT_LENGTH'] ?? '';
@@ -143,6 +142,7 @@ $autoloadFile = $privateDirectory . '/vendor/autoload.php';
 if (!is_file($configFile) || !is_readable($configFile)) {
     unavailable('mail configuration missing');
 }
+$smtpStage = 'setup';
 try {
     $config = require $configFile;
     if (!is_array($config)) {
@@ -170,6 +170,13 @@ try {
     }
     $mail = new PHPMailer\PHPMailer\PHPMailer(true);
     $mail->isSMTP();
+    // Temporary diagnostics: retain only fixed stage labels, never SMTP traffic.
+    $mail->SMTPDebug = 1;
+    $mail->Debugoutput = static function ($line, $level) use (&$smtpStage): void {
+        if (strpos($line, 'CLIENT -> SERVER: STARTTLS') === 0) $smtpStage = 'tls';
+        elseif (strpos($line, 'CLIENT -> SERVER: AUTH ') === 0) $smtpStage = 'authentication';
+        elseif (strpos($line, 'CLIENT -> SERVER: MAIL FROM:') === 0) $smtpStage = 'message submission';
+    };
     $mail->Host = $config['host'];
     $mail->Port = $config['port'];
     $mail->SMTPAuth = true;
@@ -192,8 +199,9 @@ try {
         '', 'Additional message:', $message ?: 'None', '', 'The team will reply to confirm availability.',
     ]);
     $mail->isHTML(false);
+    $smtpStage = 'connection or implicit TLS';
     $mail->send();
     respond(200, 'Request accepted.');
 } catch (Throwable $exception) {
-    unavailable('mail submission failed');
+    unavailable('mail submission failed; stage: ' . $smtpStage);
 }
