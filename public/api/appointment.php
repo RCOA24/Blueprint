@@ -124,7 +124,7 @@ $time = field('time', 30);
 $message = field('message', 8000, true);
 
 $services = [
-    'General construction', 'Architectural services', 'Remodeling & renovation',
+    'Blueprint Construction', 'Blueprint Architecture', 'Remodeling & renovation',
     'Blueprint Fencing', 'Products & fencing supplies', 'Other enquiry',
 ];
 if ($name === '' || !filter_var($email, FILTER_VALIDATE_EMAIL) || !in_array($service, $services, true) || !in_array($time, ['Morning', 'Afternoon', 'No preference'], true)) {

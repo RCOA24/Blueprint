@@ -43,6 +43,62 @@ if (-not (Test-Path blueprint-mail/config.php)) { Copy-Item mail-backend/config.
 
 Create `mail-backend/config.php` from `config.example.php` and fill in your SMTP settings first if it does not exist. Keep both config files private. In separate terminals, run `npm.cmd run dev:php` and `npm.cmd run dev`, then open `http://localhost:3000/contact/`. Blueprint uses PHP port 8001 so it can run alongside Dembassy. Restart Next.js after changing the proxy configuration. The PHP server needs write access to `blueprint-mail` for rate limiting. The test recipient in the private configuration receives requests; use authorized test addresses and replace test settings with the business's production mailbox before launch. Production still requires PHP-capable hosting and the private directory described below.
 
+## Maintaining the source
+
+The frontend uses typed React components. Page content is no longer assembled as HTML strings.
+
+| Change | File or directory |
+| --- | --- |
+| Home, About, Careers, and other page layouts | `components/pages/` |
+| Header navigation and footer links | `components/Header.tsx`, `components/Footer.tsx` |
+| Shared page heroes, links, cards, and calls to action | `components/content.tsx` |
+| Service names, descriptions, and detail content | `lib/services.ts` |
+| Project information and gallery images | `lib/projects.ts` |
+| Product collection | `lib/products.ts` |
+| Client logos and autoplay carousel | `lib/clients.ts`, `components/ClientCarousel.tsx` |
+| Address and recipient email | `lib/contact.ts`, `lib/email.ts` |
+| Page metadata and exported paths | `lib/pages.ts`, `lib/metadata.ts` |
+| Colors, spacing, and responsive layout | `app/globals.css` |
+| Menu, filters, gallery, and video behavior | `components/SiteInteractions.tsx` |
+| Appointment UI and PHP validation | `components/AppointmentForm.tsx`, `public/api/appointment.php` |
+
+The catch-all route in `app/[...slug]/page.tsx` generates the existing URLs from
+`lib/pages.ts`. Adding a service or project automatically adds its exported detail
+page and sitemap entry. Keep slugs stable to preserve existing links. For a new
+static page, add its title and description in `lib/pages.ts`, create a page
+component, and register it in `components/SitePage.tsx`.
+
+Service names are also submitted to PHP: update the endpoint's allowed service
+list and appointment test fixtures when changing those names. Recipient settings
+in the private PHP mail configuration must match the intended delivery address;
+changing the displayed frontend email does not change the server configuration.
+
+Use `npm.cmd run format` to format the frontend, and `npm.cmd run format:check`
+to check formatting. Before uploading, run `npm.cmd run lint`,
+`npm.cmd run build`, and `npm.cmd run test:e2e`. The browser test checks the
+exported site with mocked appointment responses. To compare an earlier export,
+set `BLUEPRINT_REFERENCE_DIR` to its directory before running the browser test;
+it compares page structure, content, and attributes as well as behavior.
+
+Normal anchor navigation is intentional: the interaction component attaches
+listeners to each loaded document. If adopting client-side navigation later,
+update the interaction lifecycle and verify it after navigating between pages.
+
+## Deploy to GoDaddy
+
+The current working GoDaddy setup remains a static website plus PHP endpoint.
+Run `npm.cmd run build`, then upload the **contents** of `out/` to the domain's
+existing document root. The refactor adds no Node.js server requirement.
+
+Keep the working PHP, PHPMailer, SMTP configuration, private mail directory, and
+permissions in place. Do not upload local private mail settings over production
+settings. The endpoint still uses `/api/appointment.php`, and all page URLs are
+preserved. After deployment, check nested page URLs and perform an authorized
+appointment submission to confirm actual email delivery.
+
+The following Hostinger instructions describe the earlier hosting setup and are
+retained as an alternative provider reference.
+
 ## Deploy to Hostinger
 
 These steps upload the static website through Hostinger File Manager. Confirm the target domain and document root in hPanel before replacing any existing website.

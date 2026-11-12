@@ -1,0 +1,9 @@
+.next/
+.next-dev/
+.next-stale/
+out/
+node_modules/
+next-env.d.ts
+public/
+mail-backend/
+package-lock.json

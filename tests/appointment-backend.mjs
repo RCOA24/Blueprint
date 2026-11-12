@@ -50,7 +50,7 @@ register_shutdown_function(function () { echo "\\nSTATUS:" . http_response_code(
 require $argv[1];
 `);
 const tomorrow = new Date(Date.now() + 48 * 60 * 60 * 1000).toISOString().slice(0, 10);
-const valid = { website: '', name: 'José 李', email: 'visitor@example.com', phone: '', service: 'Architectural services', date: tomorrow, time: 'Morning', message: 'Project 🏠\nPlease contact me.' };
+const valid = { website: '', name: 'José 李', email: 'visitor@example.com', phone: '', service: 'Blueprint Architecture', date: tomorrow, time: 'Morning', message: 'Project 🏠\nPlease contact me.' };
 let nextIp = 1;
 function request(fields = valid, options = {}) {
   const input = { fields, ip: options.ip ?? `127.0.0.${nextIp++}`, method: options.method ?? 'POST', length: options.length ?? 100 };

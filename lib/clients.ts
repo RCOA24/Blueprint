@@ -1,0 +1,20 @@
+/** Filenames match the supplied logo assets, including spaces and punctuation. */
+export const clients = [
+  { name: 'Calypso Grill', image: 'Calypso-Grill.png' },
+  { name: 'Caribbean Haven Residential Centre', image: 'Carribean-Haven-Residential-Centre-.png' },
+  { name: 'Cayman Islands Airport Authority', image: 'Cayman Islands Airport Authority.png' },
+  { name: 'DECCO', image: 'decco.png' },
+  { name: 'Department of Education', image: 'Department of Education.png' },
+  { name: 'Department of Agriculture', image: 'Department-of-Agriculture-.png' },
+  { name: 'Firefly', image: 'Firefly.png' },
+  { name: 'Joanna Clarke Primary School', image: 'Joana-Clarke-Primary-School-.png' },
+  { name: 'Lighthouse School', image: 'Lighthouse-School.png' },
+  { name: 'Marie Martin Primary School', image: 'Marie-Martin-Primary-School.png' },
+  { name: 'National Housing Development Trust', image: 'National-Housing-Development-Trust-.png' },
+  { name: 'Pool Patrol', image: 'PoolPatrol.png' },
+  { name: 'Prospect Primary School', image: 'Prospect-Primary-School-.png' },
+  { name: 'Public Works', image: 'Public-Works.png' },
+  { name: 'Red Bay Primary School', image: 'Redbay-Primary-School.png' },
+  { name: 'Sir John A. Cumber Primary School', image: 'Sir-John-A-Cumber-Primary-School-.png' },
+  { name: 'Theoline McCoy Primary School', image: 'Theoline-McCoy-Primary-School-.png' },
+];
