@@ -98,22 +98,16 @@ export default function SiteInteractions() {
     const videoToggle = document.querySelector<HTMLButtonElement>('.hero-video-toggle');
     if (video && videoToggle) {
       const syncVideo = () => {
+        videoToggle.hidden = false;
         videoToggle.classList.toggle('is-playing', !video.paused);
         videoToggle.setAttribute('aria-label', video.paused ? 'Play video' : 'Pause video');
       };
-      video.controls = false;
-      videoToggle.hidden = false;
       on(videoToggle, 'click', () => {
         if (video.paused) void video.play().catch(syncVideo);
         else video.pause();
       });
       on(video, 'play', syncVideo);
       on(video, 'pause', syncVideo);
-      const pauseWhenHidden = () => {
-        if (document.hidden) video.pause();
-      };
-      document.addEventListener('visibilitychange', pauseWhenHidden);
-      cleaners.push(() => document.removeEventListener('visibilitychange', pauseWhenHidden));
       syncVideo();
     }
 

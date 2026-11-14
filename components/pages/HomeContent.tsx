@@ -37,9 +37,9 @@ export default function HomeContent() {
               <video
                 id="hero-video"
                 muted
+                autoPlay
                 loop
                 playsInline
-                controls
                 preload="metadata"
                 poster={'/assets/' + 'blueprint-hero-poster.jpg'}
                 aria-label="Blueprint Group architectural animation"
@@ -47,7 +47,7 @@ export default function HomeContent() {
               >
                 <source src={'/assets/' + 'blueprint-hero.mp4'} type="video/mp4" />
               </video>
-              <button type="button" className="hero-video-toggle" aria-controls="hero-video" aria-label="Play video" hidden>
+              <button type="button" className="hero-video-toggle" aria-controls="hero-video" aria-label="Pause video" hidden>
                 <span className="hero-video-play" aria-hidden="true">▶</span>
                 <span className="hero-video-pause" aria-hidden="true">❚❚</span>
               </button>
