@@ -1422,6 +1422,56 @@ dialog img {
   object-position: center;
   background: #d9dfe0;
 }
+.hero-video-toggle {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: grid;
+  place-items: center;
+  width: 76px;
+  height: 76px;
+  border: 1px solid rgba(255, 255, 255, 0.75);
+  border-radius: 50%;
+  background: rgba(16, 30, 40, 0.38);
+  color: white;
+  backdrop-filter: blur(8px);
+  cursor: pointer;
+  font-size: 24px;
+  transition: background 0.2s, transform 0.2s;
+}
+.hero-video-toggle:hover {
+  background: rgba(16, 30, 40, 0.62);
+  transform: translate(-50%, -50%) scale(1.05);
+}
+.hero-video-toggle.is-playing {
+  top: auto;
+  left: auto;
+  right: 20px;
+  bottom: 110px;
+  width: 48px;
+  height: 48px;
+  font-size: 16px;
+  transform: none;
+}
+.hero-video-toggle.is-playing:hover {
+  transform: scale(1.05);
+}
+.hero-video-toggle:focus-visible {
+  outline: 3px solid white;
+  outline-offset: 4px;
+}
+.hero-video-toggle[hidden],
+.hero-video-pause,
+.hero-video-toggle.is-playing .hero-video-play {
+  display: none;
+}
+.hero-video-toggle.is-playing .hero-video-pause {
+  display: block;
+}
+.hero-video-play {
+  margin-left: 4px;
+}
 /* Give the original seal and full company name room to read. */
 .header-inner {
   height: 140px;

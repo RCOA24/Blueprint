@@ -95,22 +95,28 @@ export default function SiteInteractions() {
     }
 
     const video = document.querySelector<HTMLVideoElement>('#hero-video');
-    if (video) {
-      const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
-      video.muted = true;
-      const updatePlayback = () => {
-        if (motion.matches || document.hidden) {
-          video.pause();
-          return;
-        }
-        void video.play().catch(() => undefined);
+    const videoToggle = document.querySelector<HTMLButtonElement>('.hero-video-toggle');
+    if (video && videoToggle) {
+      const syncVideo = () => {
+        videoToggle.classList.toggle('is-playing', !video.paused);
+        videoToggle.setAttribute('aria-label', video.paused ? 'Play video' : 'Pause video');
       };
-      document.addEventListener('visibilitychange', updatePlayback);
-      cleaners.push(() => document.removeEventListener('visibilitychange', updatePlayback));
-      motion.addEventListener('change', updatePlayback);
-      cleaners.push(() => motion.removeEventListener('change', updatePlayback));
-      updatePlayback();
+      video.controls = false;
+      videoToggle.hidden = false;
+      on(videoToggle, 'click', () => {
+        if (video.paused) void video.play().catch(syncVideo);
+        else video.pause();
+      });
+      on(video, 'play', syncVideo);
+      on(video, 'pause', syncVideo);
+      const pauseWhenHidden = () => {
+        if (document.hidden) video.pause();
+      };
+      document.addEventListener('visibilitychange', pauseWhenHidden);
+      cleaners.push(() => document.removeEventListener('visibilitychange', pauseWhenHidden));
+      syncVideo();
     }
+
     return () => {
       for (const clean of cleaners) clean();
     };
