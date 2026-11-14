@@ -17,7 +17,7 @@ export default function ProjectContent({ project }: { project: Project }) {
         <section className="section">
           <div className="wrap">
             <div className="section-head">
-              <h2>On site.</h2>
+              <h2>{project.category === 'Architecture' ? 'Design plans.' : 'On site.'}</h2>
               <p>Select an image to take a closer look.</p>
             </div>
             <div className="gallery-grid">
@@ -31,7 +31,7 @@ export default function ProjectContent({ project }: { project: Project }) {
                 >
                   <img
                     src={assetDirectory + image}
-                    alt={project.name + ', site photograph ' + (index + 1)}
+                    alt={project.name + ', image ' + (index + 1)}
                     loading="lazy"
                   />
                   <Arrow />

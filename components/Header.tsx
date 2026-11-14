@@ -14,7 +14,7 @@ export default function Header({ path }: { path: string }) {
   return (
     <header className="header" id="header">
       <div className="wrap header-inner">
-        <Brand />
+        <Brand wordmark />
         <nav className="nav" id="navigation" aria-label="Main navigation">
           {navigation.map(([name, href]) => (
             <a

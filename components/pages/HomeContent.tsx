@@ -39,16 +39,14 @@ export default function HomeContent() {
                 muted
                 loop
                 playsInline
+                autoPlay
                 preload="metadata"
                 poster={'/assets/' + 'blueprint-hero-poster.jpg'}
                 aria-label="Blueprint Group architectural animation"
-                controls
+                disablePictureInPicture
               >
                 <source src={'/assets/' + 'blueprint-hero.mp4'} type="video/mp4" />
               </video>
-              <button className="video-toggle" aria-controls="hero-video" hidden>
-                Play video
-              </button>
               <a className="photo-tag" href="/projects/">
                 <span>
                   <small>DESIGN · BUILD · MANAGE</small>A vision for island living.

@@ -44,8 +44,13 @@ export const projects: Project[] = [
     place: 'Cayman Islands',
     year: '',
     category: 'Architecture',
-    cover: 'Floor plan placeholder 02.jpg',
-    images: [],
-    desc: '',
+    cover: 'Floor plan placeholder 02.png',
+    images: [
+      'Cayman Coastal Villa Blueprint Presentation.png',
+      'Cayman Islands Hurricane-Resilient House Blueprint.png',
+      'Cayman Islands Tropical Blueprint Home.png',
+      'Cayman Islands Tropical Residence Blueprint.png',
+    ],
+    desc: 'Architectural design plans for homes in the Cayman Islands.',
   },
 ];

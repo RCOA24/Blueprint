@@ -1,4 +1,4 @@
-export default function Brand() {
+export default function Brand({ wordmark = false }: { wordmark?: boolean }) {
   return (
     <a className="brand" href="/" aria-label="Blueprint Group home">
       <img
@@ -7,10 +7,14 @@ export default function Brand() {
         height="112"
         alt="Blueprint Group of Companies, established 2010"
       />
-      <span>
-        <strong>BLUEPRINT</strong>
-        <small>Group of Companies</small>
-      </span>
+      {wordmark ? (
+        <img className="brand-wordmark" src="/assets/Blueprint_Wordmark.svg" alt="" />
+      ) : (
+        <span>
+          <strong>BLUEPRINT</strong>
+          <small>Group of Companies</small>
+        </span>
+      )}
     </a>
   );
 }

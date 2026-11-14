@@ -10,7 +10,7 @@ export default function Footer() {
       <div className="wrap">
         <div className="footer-grid">
           <div>
-            <Brand />
+            <Brand wordmark />
             <p>
               Design. Build. Manage.
               <br />

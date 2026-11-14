@@ -8,6 +8,18 @@
   --navy: #122f4d;
   --white: #fff;
 }
+
+.header .brand img.brand-wordmark {
+  width: 200px;
+  height: auto;
+  max-width: 100%;
+}
+
+@media (max-width: 600px) {
+  .header .brand img.brand-wordmark {
+    width: clamp(120px, 38vw, 200px);
+  }
+}
 * {
   box-sizing: border-box;
 }
@@ -1391,28 +1403,6 @@ dialog img {
   object-fit: cover;
   object-position: center;
   background: #d9dfe0;
-}
-.video-toggle {
-  position: absolute;
-  top: 20px;
-  right: 20px;
-  min-height: 44px;
-  padding: 10px 16px;
-  border: 1px solid #d8deda;
-  background: rgba(255, 255, 255, 0.94);
-  color: var(--ink);
-  font-size: 12px;
-  font-weight: 550;
-  z-index: 1;
-}
-.video-toggle[hidden] {
-  display: none;
-}
-@media (max-width: 600px) {
-  .video-toggle {
-    top: 14px;
-    right: 14px;
-  }
 }
 /* Give the original seal and full company name room to read. */
 .header-inner {

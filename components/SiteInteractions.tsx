@@ -95,29 +95,30 @@ export default function SiteInteractions() {
     }
 
     const video = document.querySelector<HTMLVideoElement>('#hero-video');
-    const toggle = document.querySelector<HTMLButtonElement>('.video-toggle');
-    if (video && toggle) {
+    if (video) {
       const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
-      video.controls = false;
       video.muted = true;
-      toggle.hidden = false;
-      const sync = () => {
-        toggle.textContent = video.paused ? 'Play video' : 'Pause video';
-        toggle.setAttribute('aria-label', toggle.textContent);
+      const updatePlayback = () => {
+        if (motion.matches || document.hidden) {
+          video.pause();
+          return;
+        }
+        void video.play().catch(() => undefined);
       };
-      const motionChanged = () => {
-        if (motion.matches) video.pause();
-      };
-      on(video, 'play', sync);
-      on(video, 'pause', sync);
-      on(toggle, 'click', () => {
-        if (video.paused) void video.play().catch(sync);
+      const observer = new IntersectionObserver(([entry]) => {
+        if (entry.isIntersecting) updatePlayback();
         else video.pause();
       });
-      motion.addEventListener('change', motionChanged);
-      cleaners.push(() => motion.removeEventListener('change', motionChanged));
-      if (!motion.matches) void video.play().catch(sync);
-      sync();
+      observer.observe(video);
+      cleaners.push(() => observer.disconnect());
+      const visibilityChanged = () => {
+        if (document.hidden) video.pause();
+      };
+      document.addEventListener('visibilitychange', visibilityChanged);
+      cleaners.push(() => document.removeEventListener('visibilitychange', visibilityChanged));
+      motion.addEventListener('change', updatePlayback);
+      cleaners.push(() => motion.removeEventListener('change', updatePlayback));
+      updatePlayback();
     }
     return () => {
       for (const clean of cleaners) clean();
