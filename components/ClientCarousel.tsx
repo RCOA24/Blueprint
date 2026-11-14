@@ -6,7 +6,7 @@ export default function ClientCarousel() {
       <div className="wrap">
         <div className="section-head">
           <div>
-            <p className="eyebrow">Our clients</p>
+            <p className="eyebrow">Bringing Visions to Life, Together.</p>
             <h2 id="clients-heading">Our clients.</h2>
           </div>
         </div>

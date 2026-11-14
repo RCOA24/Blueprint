@@ -464,6 +464,20 @@ p {
 .split p {
   font-size: 15px;
 }
+.careers-intro {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(320px, 0.9fr);
+  align-items: center;
+  gap: 70px;
+}
+.careers-intro h2 {
+  margin-bottom: 24px;
+}
+.careers-intro > img {
+  width: 100%;
+  aspect-ratio: 1.15;
+  object-fit: cover;
+}
 .values {
   border-top: 1px solid var(--line);
   margin: 28px 0;
@@ -1238,6 +1252,10 @@ dialog img {
     margin-bottom: 0;
   }
   .split {
+    grid-template-columns: 1fr;
+    gap: 35px;
+  }
+  .careers-intro {
     grid-template-columns: 1fr;
     gap: 35px;
   }

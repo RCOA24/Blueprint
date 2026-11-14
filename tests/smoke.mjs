@@ -73,8 +73,15 @@ try {
   await page.goto(`${base}/projects/fence-installation-and-repair/`);
   assert.equal(await page.locator('.gallery-open').count(), 8);
   await page.goto(`${base}/projects/architectural-design-plans/`);
-  assert.equal(await page.locator('.gallery-open').count(), 0);
-  assert.equal(await page.locator('#lightbox').count(), 0);
+  assert.equal(await page.locator('.gallery-open').count(), 6);
+  assert.equal(await page.locator('#lightbox').count(), 1);
+  await page.locator('.gallery-open').last().click();
+  assert.equal(await page.locator('#lightbox').evaluate(dialog => dialog.open), true);
+  assert.equal(
+    await page.locator('#lightbox img').getAttribute('src'),
+    '/assets/Cayman Islands Residence Blueprint Board.png',
+  );
+  await page.locator('.close-dialog').click();
   for (const width of [320, 375, 768, 1024, 1440, 1920]) {
     await page.setViewportSize({ width, height: 900 });
     for (const route of routes) {
