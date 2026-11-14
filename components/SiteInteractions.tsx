@@ -98,20 +98,13 @@ export default function SiteInteractions() {
     if (video) {
       const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
       video.muted = true;
-      let visible = false;
       const updatePlayback = () => {
-        if (motion.matches || document.hidden || !visible) {
+        if (motion.matches || document.hidden) {
           video.pause();
           return;
         }
         void video.play().catch(() => undefined);
       };
-      const observer = new IntersectionObserver(([entry]) => {
-        visible = entry.isIntersecting;
-        updatePlayback();
-      });
-      observer.observe(video);
-      cleaners.push(() => observer.disconnect());
       document.addEventListener('visibilitychange', updatePlayback);
       cleaners.push(() => document.removeEventListener('visibilitychange', updatePlayback));
       motion.addEventListener('change', updatePlayback);
