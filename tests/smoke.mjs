@@ -51,19 +51,22 @@ try {
   await page.goto(base);
   await page.locator('.client-carousel').scrollIntoViewIfNeeded();
   await page.mouse.move(0, 0);
-  assert.equal(await page.locator('.client-group').first().locator('img').count(), 17);
+  await page.waitForFunction(() => document.querySelectorAll('.client-dot')[1].getAttribute('aria-current') === 'true', null, { timeout: 8000 });
+  await page.locator('.client-carousel').hover();
+  const pausedPage = await page.locator('.client-dot[aria-current="true"]').getAttribute('aria-label');
+  await page.waitForTimeout(2500);
+  assert.equal(await page.locator('.client-dot[aria-current="true"]').getAttribute('aria-label'), pausedPage);
+  assert.equal(await page.locator('.client-group img').count(), 16);
   await page.waitForFunction(() => document.querySelector('.client-group img').naturalWidth > 0);
-  for (const source of await page.locator('.client-group').first().locator('img').evaluateAll(images => images.map(image => image.getAttribute('src')))) {
+  for (const source of await page.locator('.client-group img').evaluateAll(images => images.map(image => image.getAttribute('src')))) {
     assert.ok(fs.existsSync(path.join(root, decodeURIComponent(source))), source);
   }
-  const initialTransform = await page.locator('.client-track').evaluate(track => getComputedStyle(track).transform);
-  await page.waitForFunction(initial => getComputedStyle(document.querySelector('.client-track')).transform !== initial, initialTransform);
-  await page.locator('.client-carousel').hover();
-  assert.equal(await page.locator('.client-track').evaluate(track => getComputedStyle(track).animationPlayState), 'running');
   await page.emulateMedia({ reducedMotion: 'reduce' });
-  assert.equal(await page.locator('.client-track').evaluate(track => getComputedStyle(track).animationName), 'clients-scroll');
-  assert.equal(await page.locator('.client-group').first().evaluate(group => getComputedStyle(group).flexWrap), 'nowrap');
-  assert.equal(await page.getByRole('button', { name: /carousel/i }).count(), 0);
+  assert.equal(await page.locator('.client-dot').count(), 4);
+  await page.getByRole('button', { name: 'Show client logos page 3' }).click();
+  await page.waitForFunction(() => document.querySelectorAll('.client-dot')[2].getAttribute('aria-current') === 'true');
+  await page.locator('.client-carousel').evaluate(element => { element.scrollLeft = element.clientWidth; });
+  await page.waitForFunction(() => document.querySelectorAll('.client-dot')[1].getAttribute('aria-current') === 'true');
   assert.ok(await page.locator('.client-logo img').evaluateAll(images => images.every(image => {
     const card = image.parentElement.getBoundingClientRect();
     const bounds = image.getBoundingClientRect();

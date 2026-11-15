@@ -739,29 +739,30 @@ dialog img {
   background: #eef1ed;
 }
 .client-carousel {
-  overflow: hidden;
-}
-.client-track {
   display: flex;
-  width: max-content;
-  animation: clients-scroll 65s linear infinite;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  touch-action: pan-x pan-y;
 }
+.client-carousel::-webkit-scrollbar { display: none; }
 .client-group {
-  display: flex;
-  flex-wrap: nowrap;
-  flex-shrink: 0;
-  gap: 24px;
-  padding: 0 24px 0 0;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  flex: 0 0 100%;
+  gap: 16px;
+  padding: 0;
   margin: 0;
   list-style: none;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
 }
 .client-logo {
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  flex: 0 0 224px;
-  width: 224px;
+  min-width: 0;
   height: 160px;
   padding: 18px;
   background: white;
@@ -776,10 +777,14 @@ dialog img {
   min-height: 0;
   object-fit: contain;
 }
-@keyframes clients-scroll {
-  to {
-    transform: translateX(-50%);
-  }
+.client-dots { display: flex; justify-content: center; margin-top: 16px; }
+.client-dot { display: grid; place-items: center; width: 44px; height: 44px; padding: 0; border: 0; background: transparent; cursor: pointer; }
+.client-dot::after { content: ''; width: 9px; height: 9px; border-radius: 50%; background: #9da9a2; }
+.client-dot[aria-current='true']::after { background: var(--ink); transform: scale(1.3); }
+.client-dot:focus-visible { outline: 2px solid var(--ink); outline-offset: -4px; border-radius: 50%; }
+@media (max-width: 600px) {
+  .client-group { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+  .client-logo { height: 130px; padding: 12px; }
 }
 .lightbox-image {
   position: relative;

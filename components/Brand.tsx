@@ -2,7 +2,7 @@ export default function Brand({ wordmark = false }: { wordmark?: boolean }) {
   return (
     <a className="brand" href="/" aria-label="Blueprint Group home">
       <img
-        src="/assets/blueprint-logo-smooth.png"
+        src="/assets/blueprint-logo-small.png"
         width="112"
         height="112"
         alt="Blueprint Group of Companies, established 2010"
