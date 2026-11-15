@@ -12,6 +12,7 @@ import {
 export default function HomeContent() {
   return (
     <>
+      <link rel="preload" as="image" href="/assets/blueprint-hero-poster.jpg" fetchPriority="high" />
       <section className="hero">
         <div className="wrap">
           <div className="hero-grid">

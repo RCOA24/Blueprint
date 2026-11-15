@@ -6,7 +6,6 @@ export const clients = [
   { name: 'DECCO', image: 'decco.png' },
   { name: 'Department of Education', image: 'Department of Education.png' },
   { name: 'Department of Agriculture', image: 'Department-of-Agriculture-.png' },
-  { name: 'Firefly', image: 'Firefly.png' },
   { name: 'Joanna Clarke Primary School', image: 'Joana-Clarke-Primary-School-.png' },
   { name: 'Lighthouse School', image: 'Lighthouse-School.png' },
   { name: 'Marie Martin Primary School', image: 'Marie-Martin-Primary-School.png' },
