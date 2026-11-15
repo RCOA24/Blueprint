@@ -22,7 +22,7 @@ export default function ClientCarousel() {
       if (!element || document.hidden || motion.matches) return;
       const current = Math.round(element.scrollLeft / element.clientWidth);
       element.scrollTo({ left: ((current + 1) % pages.length) * element.clientWidth, behavior: 'smooth' });
-    }, 2000);
+    }, 3500);
     return () => window.clearInterval(timer);
   }, [hovered, focused]);
 
