@@ -11,21 +11,20 @@ export default function ClientCarousel() {
   const carousel = useRef<HTMLDivElement>(null);
   const [activePage, setActivePage] = useState(0);
   const [hovered, setHovered] = useState(false);
-  const [touching, setTouching] = useState(false);
   const [focused, setFocused] = useState(false);
 
   useEffect(() => {
     const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
-    if (hovered || touching || focused) return;
+    if (hovered || focused) return;
 
     const timer = window.setInterval(() => {
       const element = carousel.current;
       if (!element || document.hidden || motion.matches) return;
       const current = Math.round(element.scrollLeft / element.clientWidth);
       element.scrollTo({ left: ((current + 1) % pages.length) * element.clientWidth, behavior: 'smooth' });
-    }, 4000);
+    }, 2000);
     return () => window.clearInterval(timer);
-  }, [hovered, touching, focused]);
+  }, [hovered, focused]);
 
   return (
     <section className="section clients-section" aria-labelledby="clients-heading">
@@ -37,11 +36,10 @@ export default function ClientCarousel() {
           </div>
         </div>
         <div
-          onMouseEnter={() => { if (window.matchMedia('(hover: hover)').matches) setHovered(true); }}
+          onMouseEnter={() => {
+            if (window.matchMedia('(hover: hover)').matches) setHovered(true);
+          }}
           onMouseLeave={() => setHovered(false)}
-          onTouchStart={() => setTouching(true)}
-          onTouchEnd={() => setTouching(false)}
-          onTouchCancel={() => setTouching(false)}
           onFocus={() => setFocused(true)}
           onBlur={(event) => {
             if (!event.currentTarget.contains(event.relatedTarget)) setFocused(false);
@@ -84,7 +82,15 @@ export default function ClientCarousel() {
               aria-label={`Show client logos page ${index + 1}`}
               aria-current={activePage === index ? 'true' : undefined}
               aria-controls="client-carousel"
-              onClick={() => carousel.current?.scrollTo({ left: index * carousel.current.clientWidth, behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' })}
+              onClick={() => {
+                setActivePage(index);
+                carousel.current?.scrollTo({
+                  left: index * carousel.current.clientWidth,
+                  behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches
+                    ? 'auto'
+                    : 'smooth',
+                });
+              }}
             />
           ))}
         </div>
