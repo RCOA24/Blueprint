@@ -16,7 +16,14 @@ export default function ServicesContent() {
         <div className="wrap">
           {services.map((service, index) => (
             <article key={service.slug} className="service-tile">
-              <img src={assetDirectory + service.image} alt={service.name} loading="lazy" />
+              <div className="service-tile-image">
+                <img
+                  className={service.slug === 'blueprint-fencing' ? 'fencing-thumbnail' : undefined}
+                  src={assetDirectory + service.image}
+                  alt={service.name}
+                  loading="lazy"
+                />
+              </div>
               <div>
                 <p className="eyebrow">0{index + 1} / Our services</p>
                 <h2>{service.name}</h2>

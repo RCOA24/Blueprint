@@ -37,12 +37,20 @@ export default function ServiceContent({ service }: { service: Service }) {
                 </li>
               ))}
             </ul>
-            <img
-              className="large-image"
-              src={assetDirectory + service.image}
-              alt={service.name}
-              loading="lazy"
-            />
+            <div className="large-image">
+              <img
+                className={
+                  service.slug === 'architectural-services'
+                    ? 'architecture-image'
+                    : service.slug === 'blueprint-fencing'
+                      ? 'fencing-image'
+                      : undefined
+                }
+                src={assetDirectory + service.image}
+                alt={service.name}
+                loading="lazy"
+              />
+            </div>
             {service.slug === 'blueprint-fencing' ? (
               <>
                 <p style={{ marginTop: 24 }}>
