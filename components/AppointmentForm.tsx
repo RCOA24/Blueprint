@@ -110,13 +110,6 @@ export default function AppointmentForm() {
           <div>
             <h3>WhatsApp</h3>
             <a href="https://wa.me/13459264546">
-              <img
-                src="/assets/whatsapp.png"
-                alt=""
-                width={19}
-                height={19}
-                style={{ display: 'inline-block', verticalAlign: 'middle', marginRight: 8 }}
-              />
               +1 (345) 926-4546 <span aria-hidden="true">↗</span>
             </a>
           </div>

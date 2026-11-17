@@ -489,19 +489,17 @@ p {
 }
 .careers-layout {
   display: grid;
-  grid-template-columns: 1.1fr 0.9fr;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: clamp(35px, 6vw, 90px);
-  align-items: start;
+  align-items: stretch;
 }
 .careers-layout h2 {
   margin-bottom: 24px;
+  font-size: clamp(28px, 3vw, 38px);
 }
 .careers-card {
   background: #eef1ed;
   padding: clamp(28px, 4vw, 55px);
-}
-.careers-card h2 {
-  font-size: clamp(28px, 3vw, 38px);
 }
 .careers-card p:last-child {
   margin-bottom: 0;
