@@ -102,8 +102,21 @@ export default function AppointmentForm() {
             and advise on next steps.
           </p>
           <div>
-            <h3>Call our team</h3>
-            <a href="tel:+13459264546">
+            <h3>Telephone</h3>
+            <a href="tel:+13459458006">
+              +1 (345) 945-8006 <span aria-hidden="true">↗</span>
+            </a>
+          </div>
+          <div>
+            <h3>WhatsApp</h3>
+            <a href="https://wa.me/13459264546">
+              <img
+                src="/assets/whatsapp.png"
+                alt=""
+                width={19}
+                height={19}
+                style={{ display: 'inline-block', verticalAlign: 'middle', marginRight: 8 }}
+              />
               +1 (345) 926-4546 <span aria-hidden="true">↗</span>
             </a>
           </div>

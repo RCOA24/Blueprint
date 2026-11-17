@@ -59,6 +59,21 @@ img {
   max-width: 100%;
   display: block;
 }
+.whatsapp-float {
+  position: fixed;
+  right: max(20px, env(safe-area-inset-right));
+  bottom: max(20px, env(safe-area-inset-bottom));
+  z-index: 30;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  overflow: hidden;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.22);
+}
+.whatsapp-float img {
+  width: 100%;
+  height: 100%;
+}
 a,
 button {
   touch-action: manipulation;
@@ -747,17 +762,8 @@ p {
   transform: scale(1.04);
 }
 .gallery-grid .gallery-graphic img {
-  object-position: top;
-}
-.gallery-graphic-label {
-  position: absolute;
-  inset: auto 0 0;
-  padding: 35px 65px 18px 18px;
-  background: linear-gradient(transparent, rgba(5, 34, 63, 0.9));
-  color: white;
-  font-size: 18px;
-  font-weight: 650;
-  text-align: left;
+  object-fit: contain;
+  background: white;
 }
 .gallery-grid .arrow {
   position: absolute;

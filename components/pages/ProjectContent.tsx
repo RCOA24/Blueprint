@@ -35,16 +35,15 @@ export default function ProjectContent({ project }: { project: Project }) {
                   className={`gallery-open${architectureGraphics[image] ? ' gallery-graphic' : ''}`}
                   data-image={image}
                   data-caption={project.name + ' — image ' + (index + 1)}
-                  aria-label={'Enlarge ' + project.name + ' image ' + (index + 1)}
+                  aria-label={
+                    'Enlarge ' + (architectureGraphics[image]?.label ?? project.name + ' image ' + (index + 1))
+                  }
                 >
                   <img
                     src={assetDirectory + (architectureGraphics[image]?.thumbnail ?? image)}
-                    alt={project.name + ', image ' + (index + 1)}
+                    alt={architectureGraphics[image]?.label ?? project.name + ', image ' + (index + 1)}
                     loading="lazy"
                   />
-                  {architectureGraphics[image] && (
-                    <span className="gallery-graphic-label">{architectureGraphics[image].label}</span>
-                  )}
                   <Arrow />
                 </button>
               ))}
