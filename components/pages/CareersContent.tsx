@@ -12,20 +12,20 @@ export default function CareersContent() {
 
       <section className="section">
         <div className="wrap careers-layout">
-          <div>
-            <h2>Join our team.</h2>
-            <p>
-              Are you passionate about design, construction, and bringing ideas to life? Join a team
-              that turns concepts into reality.
-            </p>
-            <p>We welcome talented, motivated individuals across different areas of our business.</p>
-          </div>
           <div className="careers-card">
             <h2>Your Talent. Our Vision.</h2>
             <p>
               We believe great projects begin with talented people, creative thinking, and a shared
               commitment to quality.
             </p>
+          </div>
+          <div className="careers-card">
+            <h2>Join our team.</h2>
+            <p>
+              Are you passionate about design, construction, and bringing ideas to life? Join a team
+              that turns concepts into reality.
+            </p>
+            <p>We welcome talented, motivated individuals across different areas of our business.</p>
             <p>
               Send your CV to{' '}
               <a className="text-link" href="mailto:info@blueprint.ky">
