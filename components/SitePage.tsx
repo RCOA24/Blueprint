@@ -63,6 +63,13 @@ export default function SitePage({ path }: { path: string }) {
         {path === 'contact' && <AppointmentForm />}
       </main>
       <Footer />
+      <a
+        className="whatsapp-float"
+        href="https://wa.me/13459264546"
+        aria-label="Chat with Blueprint on WhatsApp"
+      >
+        <img src="/assets/whatsapp.png" alt="" width={56} height={56} />
+      </a>
       <SiteInteractions />
       <script
         type="application/ld+json"

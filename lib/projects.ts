@@ -44,10 +44,10 @@ export const projects: Project[] = [
     place: 'Cayman Islands',
     year: '',
     category: 'Architecture',
-    cover: 'Floor plan placeholder 02.png',
+    cover: 'architectureblueprint1.jpeg',
     images: [
-     'hvacarchitecture.jpeg',
-      'architectureblueprint1.jpeg',
+      'hvacarchitecture.jpeg',
+      'plumbingarchitecture.jpeg',
       'architectureblueprint2.jpeg',
       'electricalarchitecture.jpeg',
       'Cayman Islands Residence Blueprint Board.png',

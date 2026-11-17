@@ -1,6 +1,14 @@
 import type { Project } from '@/lib/projects';
 import { PageHero, CallToAction, Arrow } from '@/components/content';
 const assetDirectory = '/assets/';
+const architectureGraphics: Record<string, { label: string; thumbnail: string }> = {
+  'hvacarchitecture.jpeg': { label: 'HVAC design', thumbnail: 'hvac-thumbnail.jpg' },
+  'plumbingarchitecture.jpeg': { label: 'Plumbing design', thumbnail: 'plumbing-thumbnail.jpg' },
+  'electricalarchitecture.jpeg': {
+    label: 'Electrical design',
+    thumbnail: 'electrical-thumbnail.jpg',
+  },
+};
 export default function ProjectContent({ project }: { project: Project }) {
   return (
     <>
@@ -24,14 +32,16 @@ export default function ProjectContent({ project }: { project: Project }) {
               {project.images.map((image, index) => (
                 <button
                   key={image}
-                  className="gallery-open"
+                  className={`gallery-open${architectureGraphics[image] ? ' gallery-graphic' : ''}`}
                   data-image={image}
                   data-caption={project.name + ' — image ' + (index + 1)}
-                  aria-label={'Enlarge ' + project.name + ' image ' + (index + 1)}
+                  aria-label={
+                    'Enlarge ' + (architectureGraphics[image]?.label ?? project.name + ' image ' + (index + 1))
+                  }
                 >
                   <img
-                    src={assetDirectory + image}
-                    alt={project.name + ', image ' + (index + 1)}
+                    src={assetDirectory + (architectureGraphics[image]?.thumbnail ?? image)}
+                    alt={architectureGraphics[image]?.label ?? project.name + ', image ' + (index + 1)}
                     loading="lazy"
                   />
                   <Arrow />
