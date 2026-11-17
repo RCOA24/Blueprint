@@ -16,6 +16,14 @@ export default function Footer() {
               <br />
               Bringing your vision to life in the Cayman Islands since 2010.
             </p>
+            <div className="footer-social" aria-label="Social media">
+              <a href="https://www.facebook.com/profile.php?id=61551207939045" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
+                <svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><path d="M13.5 21v-8h2.7l.4-3h-3.1V8.1c0-.9.3-1.6 1.6-1.6h1.7V3.8a23 23 0 0 0-2.5-.1c-2.5 0-4.2 1.5-4.2 4.3v2H7.4v3h2.7v8h3.4Z" /></svg>
+              </a>
+              <a href="https://www.instagram.com/blueprintgroupofcompanies/" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+                <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="1.8"><rect x="3" y="3" width="18" height="18" rx="5" /><circle cx="12" cy="12" r="4" /><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none" /></svg>
+              </a>
+            </div>
           </div>
           <div>
             <h3>Explore</h3>
@@ -23,7 +31,7 @@ export default function Footer() {
               <a href="/about/">About Blueprint</a>
               <a href="/projects/">Our projects</a>
               <a href="/products/">Product collection</a>
-              <a href="/careers/">Join Our Team!</a>
+              <a href="/careers/">Careers</a>
               <a href="/contact/">Contact</a>
             </div>
           </div>

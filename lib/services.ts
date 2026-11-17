@@ -60,30 +60,6 @@ export const services: Service[] = [
     ],
   },
   {
-    slug: 'remodeling',
-    name: 'Remodeling & renovation',
-    short: 'A fresh perspective on existing spaces, from interiors to complete transformations.',
-    image: 'remodeling.jpg',
-    title: 'New possibilities.\nIn familiar spaces.',
-    intro:
-      'Reimagine your home or business with renovations that bring together function, character and careful craftsmanship.',
-    items: [
-      ['Home renovations', 'Update kitchens, bathrooms and living spaces to suit your needs.'],
-      [
-        'Commercial transformations',
-        'Adapt your business environment as your requirements evolve.',
-      ],
-      [
-        'Structural changes',
-        'Explore room additions, floor plan changes and exterior transformations.',
-      ],
-      [
-        'Energy-efficient upgrades',
-        'Consider technologies and materials that improve the efficiency of your space.',
-      ],
-    ],
-  },
-  {
     slug: 'blueprint-fencing',
     name: 'Blueprint Fencing',
     short: 'Perimeter solutions that bring security, durability and design together.',

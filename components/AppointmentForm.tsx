@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { services } from '@/lib/services';
-import { addressLines, mapsUrl } from '@/lib/contact';
+import { addressLines } from '@/lib/contact';
 import { recipient } from '@/lib/email';
 
 function caymanToday(): string {
@@ -123,9 +123,6 @@ export default function AppointmentForm() {
                 </span>
               ))}
             </p>
-            <a className="text-link" href={mapsUrl} target="_blank" rel="noopener noreferrer">
-              Get directions <span aria-hidden="true">↗</span>
-            </a>
           </div>
         </div>
         <form

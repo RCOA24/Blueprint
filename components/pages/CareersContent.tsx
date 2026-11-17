@@ -12,31 +12,33 @@ export default function CareersContent() {
 
       <section className="section">
         <div className="wrap careers-intro">
-          <img
-            src="/assets/Construction Team Reviewing Blueprint Plans.png"
-            alt="Construction team reviewing blueprint plans"
-          />
           <div>
             <p className="eyebrow">Work with us</p>
             <h2>
-              <strong>JOIN OUR TEAM!</strong>
+              <strong>BE PART OF WHAT WE BUILD</strong>
             </h2>
             <p>
-              We are looking for hardworking and motivated individuals to join Blueprint Group of
-              Companies.
-              <br />
-              If you have experience or an interest in construction and related services, we would
-              like to hear from you.
+              Are you passionate about design, construction, and bringing ideas to life? Join a team
+              that turns concepts into reality.
             </p>
+            <p>We welcome talented, motivated individuals across different areas of our business.</p>
             <p>
-              <a className="text-link" href="/contact/">
-                <strong>Apply now!</strong>
-              </a>
-              <br />
               Send your CV to{' '}
               <a className="text-link" href="mailto:info@blueprint.ky">
                 <strong>info@blueprint.ky</strong>
               </a>
+            </p>
+          </div>
+        </div>
+      </section>
+      <section className="section tint">
+        <div className="wrap careers-intro">
+          <div>
+            <p className="eyebrow">Work with us</p>
+            <h2>Your Talent. Our Vision.</h2>
+            <p>
+              We believe great projects begin with talented people, creative thinking, and a shared
+              commitment to quality.
             </p>
           </div>
         </div>

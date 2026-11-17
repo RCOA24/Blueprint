@@ -20,7 +20,7 @@ const base = `http://127.0.0.1:${server.address().port}`;
 const browser = await chromium.launch({ channel: 'chrome', headless: true });
 try {
   const page = await browser.newPage();
-  const routes = ['', 'about/', 'services/', 'services/general-construction/', 'services/architectural-services/', 'services/remodeling/', 'services/blueprint-fencing/', 'projects/', 'projects/north-side/', 'projects/fence-installation-and-repair/', 'projects/architectural-design-plans/', 'products/', 'careers/', 'contact/'];
+  const routes = ['', 'about/', 'services/', 'services/general-construction/', 'services/architectural-services/', 'services/blueprint-fencing/', 'projects/', 'projects/north-side/', 'projects/fence-installation-and-repair/', 'projects/architectural-design-plans/', 'products/', 'careers/', 'contact/'];
   const reference = process.env.BLUEPRINT_REFERENCE_DIR;
   for (const route of routes) {
     const response = await page.goto(`${base}/${route}`);
