@@ -57,28 +57,35 @@ export default function SiteInteractions() {
     if (dialog) {
       const image = dialog.querySelector<HTMLImageElement>('img');
       const caption = dialog.querySelector<HTMLElement>('.dialog-footer span');
-      const thumbnails = [...document.querySelectorAll<HTMLButtonElement>('.gallery-open')];
       const previous = dialog.querySelector<HTMLButtonElement>('.gallery-prev');
       const next = dialog.querySelector<HTMLButtonElement>('.gallery-next');
       let currentIndex = 0;
+      const availableThumbnails = () =>
+        [...document.querySelectorAll<HTMLButtonElement>('.gallery-open')].filter((button) => {
+          const thumbnail = button.querySelector('img');
+          return thumbnail && (!thumbnail.complete || thumbnail.naturalWidth > 0);
+        });
       const showImage = (index: number) => {
+        const thumbnails = availableThumbnails();
         if (!image || !caption || !thumbnails.length) return;
         currentIndex = (index + thumbnails.length) % thumbnails.length;
         const thumbnail = thumbnails[currentIndex];
         image.src = `/assets/${thumbnail.dataset.image ?? ''}`;
         image.alt = thumbnail.dataset.caption ?? '';
         caption.textContent = `${image.alt} · ${currentIndex + 1} / ${thumbnails.length}`;
+        if (previous) previous.hidden = thumbnails.length < 2;
+        if (next) next.hidden = thumbnails.length < 2;
       };
       if (previous) {
-        previous.hidden = thumbnails.length < 2;
         on(previous, 'click', () => showImage(currentIndex - 1));
       }
       if (next) {
-        next.hidden = thumbnails.length < 2;
         on(next, 'click', () => showImage(currentIndex + 1));
       }
-      for (const [index, button] of thumbnails.entries())
+      for (const button of document.querySelectorAll<HTMLButtonElement>('.gallery-open'))
         on(button, 'click', () => {
+          const index = availableThumbnails().indexOf(button);
+          if (index < 0) return;
           showImage(index);
           dialog.showModal();
         });

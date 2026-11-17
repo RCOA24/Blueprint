@@ -90,10 +90,6 @@ export function ProjectCard({ project }: { project: Project }) {
         />
         <Arrow />
       </div>
-      <p className="meta">
-        {project.category} · {project.place}
-        {project.year ? ' · ' + project.year : ''}
-      </p>
       <h3>{project.name}</h3>
     </a>
   );

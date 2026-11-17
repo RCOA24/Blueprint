@@ -14,4 +14,3 @@ export const addressLines = [
   `${contactAddress.postalCode}, ${contactAddress.country}`,
 ];
 
-export const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(addressLines.join(', '))}`;

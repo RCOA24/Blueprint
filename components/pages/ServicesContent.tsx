@@ -8,7 +8,7 @@ export default function ServicesContent() {
         eyebrow={'Our expertise'}
         title={'One team.\nMany possibilities.'}
         description={
-          'Design, construction, remodeling and fencing. Explore the expertise that brings every part of your project together.'
+          'Design, construction and fencing. Explore the expertise that brings every part of your project together.'
         }
       />
 

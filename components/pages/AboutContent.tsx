@@ -1,4 +1,4 @@
-import { PageHero, CallToAction, Values } from '@/components/content';
+import { PageHero, CallToAction } from '@/components/content';
 export default function AboutContent() {
   return (
     <>
@@ -36,47 +36,24 @@ export default function AboutContent() {
               From planning to construction, our focus stays on quality, communication and the
               details that make a space work.
             </p>
-            <Values />
           </div>
         </div>
       </section>
       <section className="section tint">
-        <div className="wrap">
-          <div className="section-head">
-            <div>
-              <p className="eyebrow">Our approach</p>
-              <h2>Made for life here.</h2>
-            </div>
+        <div className="wrap split">
+          <div>
+            <h3>Our mission</h3>
             <p>
-              Considered spaces begin with an understanding of their surroundings and the people who
-              use them.
+              To transform ideas into reality through thoughtful design, quality construction, and
+              dependable service.
             </p>
           </div>
-          <div className="project-grid">
-            <div>
-              <p className="eyebrow">01 / Place</p>
-              <h3>Island understanding</h3>
-              <p>
-                Local experience informs our approach to the Cayman Islands’ architectural character
-                and construction requirements.
-              </p>
-            </div>
-            <div>
-              <p className="eyebrow">02 / People</p>
-              <h3>A shared vision</h3>
-              <p>
-                We work closely with clients to connect the original idea with the decisions that
-                bring it to life.
-              </p>
-            </div>
-            <div>
-              <p className="eyebrow">03 / Craft</p>
-              <h3>Care in the details</h3>
-              <p>
-                From materials to execution, we bring attention and practical experience to the
-                work.
-              </p>
-            </div>
+          <div>
+            <h3>Our vision</h3>
+            <p>
+              To shape the future of the Cayman Islands through innovative design, exceptional
+              craftsmanship, and structures built to last.
+            </p>
           </div>
         </div>
       </section>

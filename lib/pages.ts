@@ -2,11 +2,11 @@ import { services, type Service } from './services';
 import { projects, type Project } from './projects';
 
 const descriptions: Record<string, string> = {
-  '': 'Blueprint Group brings design, construction, remodeling and fencing expertise to projects across the Cayman Islands.',
+  '': 'Blueprint Group brings design, construction and fencing expertise to projects across the Cayman Islands.',
   about:
     'Meet Blueprint Group, a Cayman Islands construction partner since 2010, built on craftsmanship and collaboration.',
   services:
-    'Explore Blueprint Group construction, architectural, remodeling and fencing services in the Cayman Islands.',
+    'Explore Blueprint Group construction, architectural and fencing services in the Cayman Islands.',
   projects:
     'View Blueprint Group construction and fencing projects across Grand Cayman and Cayman Brac.',
   products:
